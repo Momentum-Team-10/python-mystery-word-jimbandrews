@@ -73,6 +73,11 @@ def run_game():
                 print("That's correct!")
                 correct_guesses.append(user_guess)
         
+        if guesses_left == 0:
+            print("Oh no! You've run out of guesses!")
+            print(f"The Mystery Word was {mystery_word}")
+            game_completed = True
+        
 
 
 
