@@ -17,6 +17,8 @@ def pick_a_word(difficulty):
     return difficulty[random.randint(0, len(difficulty)-1)]
 
 
+# future bug to fix: need to validate the user input to match up with one of
+# the four options available
 def game_setup():
     print("Welcome to the Mystery Word Game!")
     difficulty = input(
@@ -27,18 +29,22 @@ def game_setup():
     return picked_word
 
 
-def game_display(word, correct, incorrect, guesses_left):
+def guessed_word(word, correct):
     guessed_list = []
     for letter in word:
         if letter in correct:
             guessed_list.append(letter)
         else:
             guessed_list.append('_')
+    return guessed_list
+
+
+def game_display(word, correct, incorrect, guesses_left):
+    guessed_list = guessed_word(word, correct)
     print(' '.join(guessed_list))
     if len(incorrect) > 0:
         print(f"Letter Graveyard: {', '.join(incorrect)}")
     print(f"You have {guesses_left} guesses left.")
-    return guessed_list
 
 
 def start_game(mystery_word, correct):
@@ -84,20 +90,20 @@ def run_game():
     print("Welcome to the Mystery Word Game!")
 
     while game_completed is False:
-        guessed_word = game_display(
-            mystery_word, correct_list, incorrect_list, guesses_left
-            )
+        game_display(mystery_word, correct_list, incorrect_list, guesses_left)
         user_guess = input("Please guess a letter: ").upper()
         guesses_left, incorrect_list, correct_list = check_guess(
             mystery_word, user_guess, guesses_left, incorrect_list,
             correct_list
         )
+        guessed_list = guessed_word(mystery_word, correct_list)
         if guesses_left == 0:
             print("Oh no! You've run out of guesses!")
             print(f"The Mystery Word was {mystery_word}")
             game_completed = end_game()
-        elif list(mystery_word) == guessed_word:
+        elif list(mystery_word) == guessed_list:
             total_guesses = len(incorrect_list)+len(correct_list)
+            print(' '.join(guessed_list))
             print("Congrats! You guessed the mystery word!")
             print(
                 f"It took you {total_guesses} guesses to win."
