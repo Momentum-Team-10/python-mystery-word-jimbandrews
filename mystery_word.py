@@ -35,6 +35,7 @@ def display_word(word, letters=[]):
         else:
             guessed_list.append('_')
     print(' '.join(guessed_list))
+    return guessed_list
 
 
 def start_game(mystery_word, correct):
@@ -51,7 +52,7 @@ def run_game():
     print("Welcome to the Mystery Word Game!")
 
     while game_completed is False:
-        display_word(mystery_word, correct_guesses)
+        guessed_word = display_word(mystery_word, correct_guesses)
         if len(incorrect_guesses) > 0:
             print(f"Letter Graveyard: {', '.join(incorrect_guesses)}")
         print(f"You have {guesses_left} guesses left.")
@@ -71,12 +72,13 @@ def run_game():
         else:
             print("That's correct!")
             correct_guesses.append(user_guess)
-            # breakpoint()
         if guesses_left == 0:
             print("Oh no! You've run out of guesses!")
             print(f"The Mystery Word was {mystery_word}")
             game_completed = True
-        
+        elif list(mystery_word) == guessed_word:
+            print("Congrats! You guessed the mystery word!")
+            print(f"It took you {len(incorrect_guesses)+len(correct_guesses)}")
 
 
 
