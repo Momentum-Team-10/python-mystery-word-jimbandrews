@@ -43,36 +43,35 @@ def start_game(mystery_word, correct):
 
 
 def run_game():
-    mystery_word = "lamb"
+    mystery_word = "LAMB"
     guesses_left = 8
     incorrect_guesses = []
     correct_guesses = []
     game_completed = False
     print("Welcome to the Mystery Word Game!")
 
-    while game_completed == False:
+    while game_completed is False:
         display_word(mystery_word, correct_guesses)
         if len(incorrect_guesses) > 0:
             print(f"Letter Graveyard: {', '.join(incorrect_guesses)}")
         print(f"You have {guesses_left} guesses left.")
-        user_guess = input("Please guess a letter: ")
+        user_guess = input("Please guess a letter: ").upper()
         if len(user_guess) > 1:
             print("Please guess one letter at a time.")
         elif user_guess == " ":
             print("Please guess a letter of the alphabet.")
         elif user_guess == "":
             print("Please guess a letter of the alphabet.")
-        elif user_guess in incorrect_guesses or correct_guesses:
+        elif user_guess in incorrect_guesses or user_guess in correct_guesses:
             print("You have already guessed that letter. Please try again.")
+        elif user_guess not in mystery_word:
+            print("Sorry, that guess was incorrect.")
+            incorrect_guesses.append(user_guess)
+            guesses_left -= 1
         else:
-            if user_guess not in mystery_word:
-                print("Sorry, that guess was incorrect.")
-                incorrect_guesses.append(user_guess)
-                guesses_left -= 1
-            else:
-                print("That's correct!")
-                correct_guesses.append(user_guess)
-        
+            print("That's correct!")
+            correct_guesses.append(user_guess)
+            # breakpoint()
         if guesses_left == 0:
             print("Oh no! You've run out of guesses!")
             print(f"The Mystery Word was {mystery_word}")
