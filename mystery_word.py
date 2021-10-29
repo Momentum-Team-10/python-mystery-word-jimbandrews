@@ -5,28 +5,35 @@ with open("words.txt") as file:
     word_list = word_string.split("\n")
 
 
-def sort_by_difficulty(x=word_list):
-    ycw_easy = [word for word in word_list if len(word) < 4]
-    easy = [word for word in word_list if 3 < len(word) < 7]
-    normal = [word for word in word_list if 6 < len(word) < 9]
-    hard = [word for word in word_list if 8 < len(word)]
-    return ycw_easy, easy, normal, hard
+def build_difficulty_list(difficulty, word_list):
+    if difficulty == "ycw":
+        diff_list = [word for word in word_list if len(word) < 4]
+    elif difficulty == "easy":
+        diff_list = [word for word in word_list if 3 < len(word) < 7]
+    elif difficulty == "normal":
+        diff_list = [word for word in word_list if 6 < len(word) < 9]
+    elif difficulty == "hard":
+        diff_list = [word for word in word_list if 8 < len(word)]
+    return diff_list
 
 
-def pick_a_word(difficulty):
-    return difficulty[random.randint(0, len(difficulty)-1)]
+def pick_a_word(difficulty_list):
+    return difficulty_list[random.randint(0, len(difficulty_list)-1)]
 
 
-# future bug to fix: need to validate the user input to match up with one of
-# the four options available
 def game_setup():
+    difficulties = ["ycw", "easy", "normal", "hard"]
     print("Welcome to the Mystery Word Game!")
     difficulty = input(
-        "Please select your difficulty (ycw_easy, easy, normal, or hard): "
-        )
-    ycw_easy, easy, normal, hard = sort_by_difficulty()
-    picked_word = pick_a_word(difficulty)
-    return picked_word
+        "Please select your difficulty (ycw, easy, normal, or hard): "
+        ).lower()
+    while difficulty not in difficulties:
+        difficulty = input(
+            "Please choose ycw, easy, normal, or hard as a difficulty: "
+        ).lower()
+    difficulty_list = build_difficulty_list(difficulty, word_list)
+    picked_word = pick_a_word(difficulty_list)
+    return picked_word.upper()
 
 
 def guessed_word(word, correct):
@@ -45,10 +52,6 @@ def game_display(word, correct, incorrect, guesses_left):
     if len(incorrect) > 0:
         print(f"Letter Graveyard: {', '.join(incorrect)}")
     print(f"You have {guesses_left} guesses left.")
-
-
-def start_game(mystery_word, correct):
-    print("The Mystery Word has been selected!")
 
 
 def check_guess(mystery_word, user_guess, guesses_left, incorrect, correct):
@@ -86,12 +89,12 @@ def run_game():
 
     while new_game is True:
 
-        mystery_word = "LAMB"
+        print("Welcome to the Mystery Word Game!")
+        mystery_word = game_setup()
         guesses_left = 8
         incorrect_list = []
         correct_list = []
         game_completed = False
-        print("Welcome to the Mystery Word Game!")
 
         while game_completed is False:
             game_display(
