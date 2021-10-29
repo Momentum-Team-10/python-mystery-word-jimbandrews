@@ -75,40 +75,48 @@ def end_game():
     while play_again != "yes" and play_again != "no":
         play_again = input("Please enter 'Yes' or 'No'.").lower()
     if play_again == "yes":
-        game_completed = False
+        new_game = True
     elif play_again == "no":
-        game_completed = True
-    return game_completed
+        new_game = False
+    return new_game
 
 
 def run_game():
-    mystery_word = "LAMB"
-    guesses_left = 8
-    incorrect_list = []
-    correct_list = []
-    game_completed = False
-    print("Welcome to the Mystery Word Game!")
+    new_game = True
 
-    while game_completed is False:
-        game_display(mystery_word, correct_list, incorrect_list, guesses_left)
-        user_guess = input("Please guess a letter: ").upper()
-        guesses_left, incorrect_list, correct_list = check_guess(
-            mystery_word, user_guess, guesses_left, incorrect_list,
-            correct_list
-        )
-        guessed_list = guessed_word(mystery_word, correct_list)
-        if guesses_left == 0:
-            print("Oh no! You've run out of guesses!")
-            print(f"The Mystery Word was {mystery_word}")
-            game_completed = end_game()
-        elif list(mystery_word) == guessed_list:
-            total_guesses = len(incorrect_list)+len(correct_list)
-            print(' '.join(guessed_list))
-            print("Congrats! You guessed the mystery word!")
-            print(
-                f"It took you {total_guesses} guesses to win."
+    while new_game is True:
+
+        mystery_word = "LAMB"
+        guesses_left = 8
+        incorrect_list = []
+        correct_list = []
+        game_completed = False
+        print("Welcome to the Mystery Word Game!")
+
+        while game_completed is False:
+            game_display(
+                mystery_word, correct_list, incorrect_list, guesses_left
                 )
-            game_completed = end_game()
+            user_guess = input("Please guess a letter: ").upper()
+            guesses_left, incorrect_list, correct_list = check_guess(
+                mystery_word, user_guess, guesses_left, incorrect_list,
+                correct_list
+            )
+            guessed_list = guessed_word(mystery_word, correct_list)
+            if guesses_left == 0:
+                print("Oh no! You've run out of guesses!")
+                print(f"The Mystery Word was {mystery_word}")
+                game_completed = True
+            elif list(mystery_word) == guessed_list:
+                total_guesses = len(incorrect_list)+len(correct_list)
+                print(' '.join(guessed_list))
+                print("Congrats! You guessed the mystery word!")
+                print(
+                    f"It took you {total_guesses} guesses to win."
+                    )
+                game_completed = True
+
+        new_game = end_game()
 
 
 run_game()
