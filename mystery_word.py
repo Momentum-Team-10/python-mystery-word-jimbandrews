@@ -27,20 +27,41 @@ def game_setup():
     return picked_word
 
 
-def display_word(word, letters=[]):
+def game_display(word, correct, incorrect, guesses_left):
     guessed_list = []
     for letter in word:
-        if letter in letters:
+        if letter in correct:
             guessed_list.append(letter)
         else:
             guessed_list.append('_')
     print(' '.join(guessed_list))
+    if len(incorrect) > 0:
+        print(f"Letter Graveyard: {', '.join(incorrect)}")
+    print(f"You have {guesses_left} guesses left.")
     return guessed_list
 
 
 def start_game(mystery_word, correct):
     print("The Mystery Word has been selected!")
 
+
+def check_guess(mystery_word, user_guess, guesses_left, incorrect, correct):
+    if len(user_guess) > 1:
+        print("Please guess one letter at a time.")
+    elif user_guess == " ":
+        print("Please guess a letter of the alphabet.")
+    elif user_guess == "":
+        print("Please guess a letter of the alphabet.")
+    elif user_guess in incorrect or user_guess in correct:
+        print("You have already guessed that letter. Please try again.")
+    elif user_guess not in mystery_word:
+        print("Sorry, that guess was incorrect.")
+        incorrect.append(user_guess)
+        guesses_left -= 1
+    else:
+        print("That's correct!")
+        correct.append(user_guess)
+    return guesses_left, incorrect, correct
 
 
 def run_game():
@@ -52,35 +73,24 @@ def run_game():
     print("Welcome to the Mystery Word Game!")
 
     while game_completed is False:
-        guessed_word = display_word(mystery_word, correct_guesses)
-        if len(incorrect_guesses) > 0:
-            print(f"Letter Graveyard: {', '.join(incorrect_guesses)}")
-        print(f"You have {guesses_left} guesses left.")
+        guessed_word = game_display(
+            mystery_word, correct_guesses, incorrect_guesses, guesses_left
+            )
         user_guess = input("Please guess a letter: ").upper()
-        if len(user_guess) > 1:
-            print("Please guess one letter at a time.")
-        elif user_guess == " ":
-            print("Please guess a letter of the alphabet.")
-        elif user_guess == "":
-            print("Please guess a letter of the alphabet.")
-        elif user_guess in incorrect_guesses or user_guess in correct_guesses:
-            print("You have already guessed that letter. Please try again.")
-        elif user_guess not in mystery_word:
-            print("Sorry, that guess was incorrect.")
-            incorrect_guesses.append(user_guess)
-            guesses_left -= 1
-        else:
-            print("That's correct!")
-            correct_guesses.append(user_guess)
+        guesses_left, incorrect_guesses, correct_guesses = check_guess(
+            mystery_word, user_guess, guesses_left, incorrect_guesses,
+            correct_guesses
+        )
         if guesses_left == 0:
             print("Oh no! You've run out of guesses!")
             print(f"The Mystery Word was {mystery_word}")
             game_completed = True
         elif list(mystery_word) == guessed_word:
             print("Congrats! You guessed the mystery word!")
-            print(f"It took you {len(incorrect_guesses)+len(correct_guesses)}")
-
-
+            print(
+                f"It took you {len(incorrect_guesses)+len(correct_guesses)} guesses to win."
+                )
+            game_completed = True
 
 
 run_game()
