@@ -33,13 +33,54 @@ def build_permutations(letters_list):
             continue
         else:
             no_repeat.append(tuple)
-    for tuple in no_repeat:
-        list(tuple)
     return no_repeat
 
 
-def find_new_mystery_list(guessed_letter, current_word, perm_dict, ):
+def create_perm_seeds(letter, blanks):
+    perm_seeds = []
+    for index in range(len(blanks)):
+        copy = blanks.copy()
+        copy[index] = letter
+        perm_seeds.append(copy)
+    return perm_seeds
 
+
+def find_new_mystery_list(
+    guessed_letter, current_word, main_list, perm_dict
+):
+    current_blanks = current_word.copy()
+    for letter in current_word:
+        if letter != "_":
+            current_blanks.remove(letter)
+    all_permutations = {tuple(current_blanks): []}
+    permutation_seeds = create_perm_seeds(guessed_letter, current_word)
+    for seed in permutation_seeds:
+        perms = build_permutations(seed)
+        for permutation in perms:
+            all_permutations[tuple(permutation)] = []
+    for permutation in all_permutations.keys():
+        perm_list = list(permutation)
+        for letter in perm_dict.keys():
+            perm_list.insert(perm_dict[letter], letter)
+        perm_string = "".join(perm_list)
+        for word in main_list:
+            match_score = 0
+            for index in range(len(perm_string)):
+                if perm_string[index] == "_":
+                    match_score += 1
+                    continue
+                elif perm_string[index] == word[index]:
+                    match_score += 1
+            if match_score == len(perm_string):
+                all_permutations[permutation].append(word)
+
+
+
+    # everythiing below this line in function is temporary placeholders to 
+    # get code to run for debugging
+    new_mystery_list = []
+    new_current_word = []
+    return new_mystery_list, new_current_word
 
 
 def run_game(word_list):
@@ -54,9 +95,13 @@ def run_game(word_list):
         permanent_letters = {}
 
         while game_completed is False:
+            print(" ".join(guessed_word))
             user_guess = input(
                 "Please guess a letter from the alphabet: "
-                ).upper()
-            
+            ).upper()
+            mystery_list, guessed_word = find_new_mystery_list(
+                user_guess, guessed_word, mystery_list, permanent_letters
+            )
+
 
 run_game(main_word_list)
