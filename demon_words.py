@@ -1,5 +1,5 @@
 # from math import factorial
-from itertools import permutations
+from itertools import combinations
 
 
 with open("words.txt") as file:
@@ -25,15 +25,22 @@ def build_word_list(length, word_list):
 
 # given a list of letters and spaces, returns a list of permutations
 # each permutation is a tuple
-def build_permutations(letters_list):
-    perms = list(permutations(letters_list))
-    no_repeat = []
-    for tuple in perms:
-        if tuple in no_repeat:
-            continue
-        else:
-            no_repeat.append(tuple)
-    return no_repeat
+def build_permutations(indices):
+    index_perms = []
+    for length in range(1, len(indices)+1):
+        perms_list = list(combinations(indices, length))
+        index_perms.extend(perms_list)
+    return index_perms
+
+
+    # perms = list(permutations(letters_list))
+    # no_repeat = []
+    # for tuple in perms:
+    #     if tuple in no_repeat:
+    #         continue
+    #     else:
+    #         no_repeat.append(tuple)
+    # return no_repeat
 
 
 def create_perm_seeds(letter, blanks):
@@ -70,10 +77,14 @@ def fill_permutations_dict(guessed_letter, current_word):
     return all_permutations
 
 
+# def restore_permanent_letters(tuple, perm_dict):
+#     new_list = list(tuple)
+#     for letter in perm_dict:
+
+
+
 # types: string, list, list, dictionary
-def find_new_mystery_list(
-    guessed_letter, current_word, main_list, perm_dict
-):
+def find_new_mystery_list(guessed_letter, current_word, main_list, perm_dict):
     matched_words = []
     all_permutations = fill_permutations_dict(guessed_letter, current_word)
     for permutation in all_permutations.keys():
@@ -109,21 +120,60 @@ def run_game(word_list):
         # Temporary placeholder; will let player select word lenght later
         mystery_length = 4
         game_completed = False
-        mystery_list = build_word_list(mystery_length, word_list)
+        # mystery_list = build_word_list(mystery_length, word_list)
+        mystery_list = ['echo', 'heal', 'best', 'lazy']
         guessed_word = list(mystery_length * "_")
         permanent_letters = {}
+        guessed_letters = []
 
         while game_completed is False:
-            breakpoint()
             print(" ".join(guessed_word))
             user_guess = input("Please guess a letter from the alphabet: ")
             while user_guess.isalpha() is False:
                 user_guess = input("That is not a letter. Please try again: ")
+            while user_guess.upper() in guessed_letters:
+                user_guess = input(
+                    "You have already guessed that letter. Please try again: "
+                )
             user_guess = user_guess.upper()
+            guessed_letters.append(user_guess)
             mystery_list, guessed_word_tuple = find_new_mystery_list(
                 user_guess, guessed_word, mystery_list, permanent_letters
             )
             guessed_word = list(guessed_word_tuple)
 
 
-run_game(main_word_list)
+# run_game(main_word_list)
+
+
+def build_blank_indices(word):
+    blank_indices = []
+    for index in range(len(word)):
+        if word[index] == '_':
+            blank_indices.append(index)
+    return blank_indices
+
+
+def build_families_dict(index_perms, word, letter):
+    # note: here, word is of type list
+    word_families_dict = {}
+    for tuple in index_perms:
+        copy = word.copy()
+        for index in tuple:
+            copy[index] = letter
+        word_families_dict["".join(copy)] = []
+    return word_families_dict
+
+
+def find_new_list_and_word(current_word, new_guess, words_list):
+    matched_words = []
+    blanks = build_blank_indices(current_word)
+    index_permutations = build_permutations(blanks)
+    families_dict = build_families_dict(index_permutations, current_word, new_guess)
+
+
+guessed_word = ['_', 'E', '_', '_']
+blanks = build_blank_indices(guessed_word)
+index_permutations = build_permutations(blanks)
+dict = build_families_dict(index_permutations, guessed_word, 'A')
+print(dict)
