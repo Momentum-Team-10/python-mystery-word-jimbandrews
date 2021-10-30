@@ -8,7 +8,7 @@ with open("words.txt") as file:
 
 
 def build_word_list(length, word_list):
-    return [word for word in word_list if len(word) == length]
+    return [word.lower() for word in word_list if len(word) == length]
 
 
 def build_mini_word_list(word_list, guessed_word):
@@ -39,8 +39,8 @@ def build_permutations(letters_list):
 def create_perm_seeds(letter, blanks):
     perm_seeds = []
     for index in range(len(blanks)):
+        blanks[index] = letter
         copy = blanks.copy()
-        copy[index] = letter
         perm_seeds.append(copy)
     return perm_seeds
 
@@ -62,7 +62,7 @@ def find_new_mystery_list(
         perm_list = list(permutation)
         for letter in perm_dict.keys():
             perm_list.insert(perm_dict[letter], letter)
-        perm_string = "".join(perm_list)
+        perm_string = "".join(perm_list).lower()
         for word in main_list:
             match_score = 0
             for index in range(len(perm_string)):
@@ -73,10 +73,8 @@ def find_new_mystery_list(
                     match_score += 1
             if match_score == len(perm_string):
                 all_permutations[permutation].append(word)
-
-
-
-    # everythiing below this line in function is temporary placeholders to 
+    breakpoint()
+    # everythiing below this line in function is temporary placeholders to
     # get code to run for debugging
     new_mystery_list = []
     new_current_word = []
