@@ -11,8 +11,8 @@ def build_word_list(length, word_list):
     return [word.lower() for word in word_list if len(word) == length]
 
 
-def build_mini_word_list(word_list, guessed_word):
-    return [word for word in word_list if list(word) == guessed_word]
+# def build_mini_word_list(word_list, guessed_word):
+#     return [word for word in word_list if list(word) == guessed_word]
 
 # # returns the number of permutations for a specific number of letters
 # # (letters_num) in a number of available spaces (total_spaces)
@@ -55,10 +55,7 @@ def set_passing_match_score(permutation):
     return passing_score
 
 
-def find_new_mystery_list(
-    guessed_letter, current_word, main_list, perm_dict
-):
-    matched_words = []
+def fill_permutations_dict(guessed_letter, current_word):
     current_blanks = current_word.copy()
     for letter in current_word:
         if letter != "_":
@@ -70,9 +67,17 @@ def find_new_mystery_list(
         for permutation in perms:
             all_permutations[tuple(permutation)] = []
     all_permutations[tuple(current_blanks)] = []
+    return all_permutations
+
+
+# types: string, list, list, dictionary
+def find_new_mystery_list(
+    guessed_letter, current_word, main_list, perm_dict
+):
+    matched_words = []
+    all_permutations = fill_permutations_dict(guessed_letter, current_word)
     for permutation in all_permutations.keys():
         perm_list = list(permutation)
-        # ignoring these lines for now, focus on getting first guess to work
         for letter in perm_dict.keys():
             perm_list.insert(perm_dict[letter], letter)
         perm_string = "".join(perm_list).lower()
@@ -109,10 +114,12 @@ def run_game(word_list):
         permanent_letters = {}
 
         while game_completed is False:
+            breakpoint()
             print(" ".join(guessed_word))
-            user_guess = input(
-                "Please guess a letter from the alphabet: "
-            ).upper()
+            user_guess = input("Please guess a letter from the alphabet: ")
+            while user_guess.isalpha() is False:
+                user_guess = input("That is not a letter. Please try again: ")
+            user_guess = user_guess.upper()
             mystery_list, guessed_word_tuple = find_new_mystery_list(
                 user_guess, guessed_word, mystery_list, permanent_letters
             )
