@@ -52,9 +52,9 @@ def build_families_dict(index_perms, word, letter):
 
 def convert_word(blanked, word):
     '''
-    parameters: string of letters and blanks (permutation), a string of all 
+    parameters: string of letters and blanks (permutation), a string of all
         letters (word within mystery list)
-    returns: word from mystery list with blank spaces in the same place as 
+    returns: word from mystery list with blank spaces in the same place as
         the permutation
     '''
     word = word.upper()
@@ -100,10 +100,13 @@ def find_new_list_and_word(current_word, new_guess, words_list):
     families_dict = build_families_dict(
         index_permutations, current_word, new_guess
     )
-    filled_families = fill_families_dict(families_dict, words_list, current_word)
+    filled_families = fill_families_dict(
+        families_dict, words_list, current_word
+    )
     max_list_key = ''.join(current_word)
     for permutation in filled_families:
-        if len(filled_families[permutation]) > len(filled_families[max_list_key]):
+        permutation_list = filled_families[permutation]
+        if len(permutation_list) > len(filled_families[max_list_key]):
             max_list_key = permutation
     new_current_word = list(max_list_key)
     new_word_list = filled_families[max_list_key]
@@ -124,6 +127,7 @@ def choose_difficulty():
     '''
     returns: player-chosen length of mystery word
     '''
+    print()
     word_length = input("How long would you like the mystery word to be? ")
     while word_length.isnumeric() is False:
         print("Sorry, that is not a valid number.")
@@ -131,7 +135,7 @@ def choose_difficulty():
     return int(word_length)
 
 
-def is_game_complete(guesses_left, guessed_word, word_list):
+def is_game_complete(guesses_left, guessed_word, word_list, letter_list):
     '''
     parameters: number of guesses left, currently guessed word, and list of
         words
@@ -145,7 +149,7 @@ def is_game_complete(guesses_left, guessed_word, word_list):
     elif '_' not in guessed_word:
         game_completed = True
         print("Congrats! you've guessed the Mystery Word!")
-        print(f"It took you {20-guesses_left} guesses to win.")
+        print(f"It took you {len(letter_list)} guesses to win.")
     else:
         game_completed = False
     return game_completed
@@ -153,7 +157,7 @@ def is_game_complete(guesses_left, guessed_word, word_list):
 
 def is_new_game():
     '''
-    returns: bollean of if a new game should start
+    returns: boolean of if a new game should start
     '''
     yes = ['YES', 'Y', 'YE', 'YS']
     no = ['NO', 'N']
@@ -167,8 +171,31 @@ def is_new_game():
     return new_game
 
 
+def game_start():
+    '''
+    returns: boolean indicating whether to start the game
+    '''
+    print("WELCOME!\n")
+    print(
+        "Is the regular Mystery Word game too simple for you?",
+        "Are you looking for a bigger challenge?",
+        "Then step right up, this is the game for you!",
+        "But be warned,",
+        "this game is harder than The Lion King on the Sega Genesis\n"
+    )
+    response = input("Are you sure you want to play?\n").upper()
+    yes = ['YES', 'Y', 'YE', 'YS']
+    no = ['NO', 'N']
+    while response not in yes and response not in no:
+        response = input("What was that? Come now, speak up. ").upper()
+    if response in yes:
+        return True
+    elif response in no:
+        return False
+
+
 def run_game():
-    new_game = True
+    new_game = game_start()
 
     while new_game is True:
         with open("words.txt") as file:
@@ -180,7 +207,7 @@ def run_game():
         mystery_list = build_word_list(mystery_length, main_word_list)
         game_completed = False
         guessed_letters = []
-        guesses_left = 20
+        guesses_left = 24
 
         while game_completed is False:
             game_display(guessed_word, guessed_letters, guesses_left)
@@ -203,7 +230,7 @@ def run_game():
             guesses_left -= 1
 
             game_completed = is_game_complete(
-                guesses_left, guessed_word, mystery_list
+                guesses_left, guessed_word, mystery_list, guessed_letters
             )
 
         new_game = is_new_game()
