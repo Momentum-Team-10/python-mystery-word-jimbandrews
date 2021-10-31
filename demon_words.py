@@ -3,10 +3,18 @@ import random
 
 
 def build_word_list(length, word_list):
+    '''
+    parameters: chosen word length and a list of words
+    returns: list of words of the length given
+    '''
     return [word.upper() for word in word_list if len(word) == length]
 
 
 def build_permutations(indices):
+    '''
+    parameter: a list of indices of blank spaces in the currently guessed word
+    returns: a list of tuples, each containing a permutation of the indices
+    '''
     index_perms = []
     for length in range(1, len(indices)+1):
         perms_list = list(combinations(indices, length))
@@ -43,6 +51,12 @@ def build_families_dict(index_perms, word, letter):
 
 
 def convert_word(blanked, word):
+    '''
+    parameters: string of letters and blanks (permutation), a string of all 
+        letters (word within mystery list)
+    returns: word from mystery list with blank spaces in the same place as 
+        the permutation
+    '''
     word = word.upper()
     listed_word = list(word)
     for letter in listed_word:
@@ -54,6 +68,12 @@ def convert_word(blanked, word):
 
 
 def fill_families_dict(families_dict, words_list, guessed_word):
+    '''
+    parameters: dictionary with permutations as keys and empty lists as values,
+        a list of words, the currently guessed word as a list
+    returns: dictionary with lists filled with words whose letters match those
+        of the corresponding key
+    '''
     matched_words = []
     list_copy = words_list.copy()
     for permutation in families_dict:
@@ -70,6 +90,11 @@ def fill_families_dict(families_dict, words_list, guessed_word):
 
 
 def find_new_list_and_word(current_word, new_guess, words_list):
+    '''
+    parameters: currently guessed word as a list, the new guess from the
+        player, and a list of words
+    returns: new currently guessed word and word list
+    '''
     blanks = build_blank_indices(current_word)
     index_permutations = build_permutations(blanks)
     families_dict = build_families_dict(
@@ -96,6 +121,9 @@ def game_display(guessed_word, guessed_letters, guesses_left):
 
 
 def choose_difficulty():
+    '''
+    returns: player-chosen length of mystery word
+    '''
     word_length = input("How long would you like the mystery word to be? ")
     while word_length.isnumeric() is False:
         print("Sorry, that is not a valid number.")
@@ -104,6 +132,11 @@ def choose_difficulty():
 
 
 def is_game_complete(guesses_left, guessed_word, word_list):
+    '''
+    parameters: number of guesses left, currently guessed word, and list of
+        words
+    returns: boolean of if the game is completed
+    '''
     if guesses_left == 0:
         game_completed = True
         print("Oh no! You don't have any more guesses left!")
@@ -119,6 +152,9 @@ def is_game_complete(guesses_left, guessed_word, word_list):
 
 
 def is_new_game():
+    '''
+    returns: bollean of if a new game should start
+    '''
     yes = ['YES', 'Y', 'YE', 'YS']
     no = ['NO', 'N']
     play_again = input("Would you like to play again? ").upper()
@@ -149,6 +185,7 @@ def run_game():
         while game_completed is False:
             game_display(guessed_word, guessed_letters, guesses_left)
             user_guess = input("Please guess a letter from the alphabet: ")
+
             while len(user_guess) != 1:
                 user_guess = input("Please guess one letter at a time: ")
             while user_guess.isalpha() is False:
@@ -158,11 +195,13 @@ def run_game():
                 user_guess = input(
                     "You have already guessed that letter. Please try again: "
                 ).upper()
+
             guessed_letters.append(user_guess)
             guessed_word, mystery_list = find_new_list_and_word(
                 guessed_word, user_guess, mystery_list
             )
             guesses_left -= 1
+
             game_completed = is_game_complete(
                 guesses_left, guessed_word, mystery_list
             )
