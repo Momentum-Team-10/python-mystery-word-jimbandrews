@@ -145,6 +145,11 @@ def run_game(word_list):
 
 # run_game(main_word_list)
 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 # parameter: the word as a list
 # returns: a list of the indices of the blank spaces
 def build_blank_indices(word):
@@ -202,25 +207,34 @@ def fill_families_dict(families_dict, words_list):
     return families_dict
 
 
-
-
 # this is find_new_mystery_list v2.0
 def find_new_list_and_word(current_word, new_guess, words_list):
-    matched_words = []
     blanks = build_blank_indices(current_word)
     index_permutations = build_permutations(blanks)
     families_dict = build_families_dict(
         index_permutations, current_word, new_guess
     )
+    filled_families = fill_families_dict(families_dict, words_list)
+    max_list_key = len(current_word) * '_'
+    for permutation in filled_families:
+        if len(filled_families[permutation]) > len(filled_families[max_list_key]):
+            max_list_key = permutation
+    new_current_word = max_list_key
+    new_word_list = filled_families[max_list_key]
+    return new_current_word, new_word_list
 
 
-# TEST CODE
+
+# # TEST CODE
 mystery_list = ['echo', 'heal', 'best', 'lazy']
 guessed_word = ['_', '_', '_', '_']
-blanks = build_blank_indices(guessed_word)
-index_permutations = build_permutations(blanks)
-dict = build_families_dict(index_permutations, guessed_word, 'E')
-# breakpoint()
-filled_dict = fill_families_dict(dict, mystery_list)
-print(filled_dict)
-# print(convert_word(guessed_word, "heal"))
+# blanks = build_blank_indices(guessed_word)
+# index_permutations = build_permutations(blanks)
+# dict = build_families_dict(index_permutations, guessed_word, 'E')
+# filled_dict = fill_families_dict(dict, mystery_list)
+# print(filled_dict)
+# # print(convert_word(guessed_word, "heal"))
+
+guessed_word, mystery_list = find_new_list_and_word(guessed_word, 'E', mystery_list)
+print(guessed_word)
+print(mystery_list)
