@@ -1,4 +1,5 @@
 from itertools import combinations
+import random
 
 
 def build_word_list(length, word_list):
@@ -26,7 +27,6 @@ def build_blank_indices(word):
 
 
 def build_families_dict(index_perms, word, letter):
-    # note: here, word is of type list
     '''
     paramter: a list of permutations of the blank space industries, the guessed
     word as a list, and the guessed letter
@@ -53,7 +53,6 @@ def convert_word(blanked, word):
     return ''.join(listed_word)
 
 
-# need to fix a bug here; lines 74,75 only need to run if it is the first guess
 def fill_families_dict(families_dict, words_list, guessed_word):
     matched_words = []
     list_copy = words_list.copy()
@@ -86,13 +85,14 @@ def find_new_list_and_word(current_word, new_guess, words_list):
     return new_current_word, new_word_list
 
 
-def game_display(guessed_word, guessed_letters):
+def game_display(guessed_word, guessed_letters, guesses_left):
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>")
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print(" ".join(guessed_word))
     if len(guessed_letters) > 0:
         print(f"Letter Graveyard: {', '.join(guessed_letters)}")
+    print(f"You have {guesses_left} guesses left.")
 
 
 def choose_difficulty():
@@ -102,6 +102,33 @@ def choose_difficulty():
         word_length = input("Please enter a positive whole number: ")
     return int(word_length)
 
+
+def is_game_complete(guesses_left, guessed_word, word_list):
+    if guesses_left == 0:
+        game_completed = True
+        print("Oh no! You don't have any more guesses left!")
+        correct_word = word_list[random.randrange(0, len(word_list))]
+        print(f"The word we were looking for was {correct_word}")
+    elif '_' not in guessed_word:
+        game_completed = True
+        print("Congrats! you've guessed the Mystery Word!")
+        print(f"It took you {20-guesses_left} guesses to win.")
+    else:
+        game_completed = False
+    return game_completed
+
+
+def is_new_game():
+    yes = ['YES', 'Y', 'YE', 'YS']
+    no = ['NO', 'N']
+    play_again = input("Would you like to play again? ").upper()
+    while play_again not in yes and play_again not in no:
+        play_again = input("Please answer 'Yes' or 'No': ")
+    if play_again in yes:
+        new_game = True
+    if play_again in no:
+        new_game = False
+    return new_game
 
 # add in word_list as a parameter later
 def run_game():
@@ -117,14 +144,14 @@ def run_game():
             main_word_list = word_string.split("\n")
 
         mystery_length = choose_difficulty()
-        guessed_word = mystery_length * '_'
+        guessed_word = list(mystery_length * '_')
         mystery_list = build_word_list(mystery_length, main_word_list)
-        breakpoint()
         game_completed = False
         guessed_letters = []
+        guesses_left = 20
 
         while game_completed is False:
-            game_display(guessed_word, guessed_letters)
+            game_display(guessed_word, guessed_letters, guesses_left)
             user_guess = input("Please guess a letter from the alphabet: ")
             while len(user_guess) != 1:
                 user_guess = input("Please guess one letter at a time: ")
@@ -134,9 +161,19 @@ def run_game():
             while user_guess in guessed_letters:
                 user_guess = input(
                     "You have already guessed that letter. Please try again: "
-                )
+                ).upper()
             guessed_letters.append(user_guess)
-            guessed_word, mystery_list = find_new_list_and_word(guessed_word, user_guess, mystery_list)
+            guessed_word, mystery_list = find_new_list_and_word(
+                guessed_word, user_guess, mystery_list
+            )
+            guesses_left -= 1
+            game_completed = is_game_complete(
+                guesses_left, guessed_word, mystery_list
+            )
+
+        new_game = is_new_game()
+
+
 
 
 run_game()
