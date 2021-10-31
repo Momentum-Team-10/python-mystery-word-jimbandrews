@@ -130,15 +130,11 @@ def is_new_game():
         new_game = False
     return new_game
 
-# add in word_list as a parameter later
+
 def run_game():
     new_game = True
 
     while new_game is True:
-        # placeholders to get code to work
-        # mystery_list = ['echo', 'heal', 'best', 'lazy']
-        # guessed_word = ['_', '_', '_', '_']
-
         with open("words.txt") as file:
             word_string = file.read()
             main_word_list = word_string.split("\n")
@@ -172,8 +168,6 @@ def run_game():
             )
 
         new_game = is_new_game()
-
-
 
 
 run_game()
