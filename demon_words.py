@@ -148,10 +148,10 @@ def choose_difficulty():
     returns: player-chosen length of mystery word
     '''
     print()
-    word_length = input("How long would you like the mystery word to be? ")
+    word_length = input("How long would you like the mystery word to be? \n")
     while word_length.isnumeric() is False:
         print("Sorry, that is not a valid number.")
-        word_length = input("Please enter a positive whole number: ")
+        word_length = input("Please enter a positive whole number: \n")
     return int(word_length)
 
 
@@ -163,11 +163,13 @@ def is_game_complete(guesses_left, guessed_word, word_list, letter_list):
     '''
     if guesses_left == 0:
         game_completed = True
+        print(guessed_word)
         print("Oh no! You don't have any more guesses left!")
         correct_word = word_list[random.randrange(0, len(word_list))]
         print(f"The word we were looking for was {correct_word}")
     elif '_' not in guessed_word:
         game_completed = True
+        print(guessed_word)
         print("Congrats! you've guessed the Mystery Word!")
         print(f"It took you {len(letter_list)} guesses to win.")
     else:
@@ -183,7 +185,7 @@ def is_new_game():
     no = ['NO', 'N']
     play_again = input("Would you like to play again? ").upper()
     while play_again not in yes and play_again not in no:
-        play_again = input("Please answer 'Yes' or 'No': ")
+        play_again = input("Please answer 'Yes' or 'No': \n")
     if play_again in yes:
         new_game = True
     if play_again in no:
@@ -201,7 +203,7 @@ def game_start():
         "Are you looking for a bigger challenge?",
         "Then step right up, this is the game for you!",
         "But be warned,",
-        "this game is harder than The Lion King on the Sega Genesis\n"
+        "this game is harder than finding street parking in San Francisco.\n"
     )
     response = input("Are you sure you want to play?\n").upper()
     yes = ['YES', 'Y', 'YE', 'YS']
