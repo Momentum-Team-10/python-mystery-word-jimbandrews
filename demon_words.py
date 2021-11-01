@@ -5,9 +5,10 @@ import random
 def build_word_list(length, word_list):
     '''
     parameters: chosen word length and a list of words
-    returns: list of words of the length given
+    returns: list of words of the length given with no duplicates
     '''
-    return [word.upper() for word in word_list if len(word) == length]
+    mylist = [word.upper() for word in word_list if len(word) == length]
+    return list(dict.fromkeys(mylist))
 
 
 def build_permutations(indices):
@@ -105,7 +106,6 @@ def fill_families_dict(families_dict, words_list, guessed_word, guess):
             else:
                 occurrences_dict[word] = word_count
     families_dict[''.join(guessed_word)] = list_copy
-    breakpoint()
     return families_dict
 
 
