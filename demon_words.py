@@ -36,8 +36,8 @@ def build_blank_indices(word):
 
 def build_families_dict(index_perms, word, letter):
     '''
-    paramter: a list of permutations of the blank space industries, the guessed
-    word as a list, and the guessed letter
+    paramter: a list of permutations (as tuples) of the blank space industries,
+    the guessed word as a list, and the guessed letter
     returns: dictionary where the keys are all the permutations adding the
     letter to the blanks in the guessed word; and the values are empty lists
     '''
@@ -59,15 +59,23 @@ def convert_word(blanked, word):
     '''
     word = word.upper()
     listed_word = list(word)
-    for letter in listed_word:
-        index = listed_word.index(letter)
+    for tuple in enumerate(listed_word):
+        index = tuple[0]
         if blanked[index] == '_':
             listed_word.pop(index)
             listed_word.insert(index, '_')
     return ''.join(listed_word)
 
 
-def fill_families_dict(families_dict, words_list, guessed_word):
+def counting_guess(guess, word):
+    occurrences = 0
+    for letter in word:
+        if letter == guess:
+            occurrences += 1
+    return occurrences
+
+
+def fill_families_dict(families_dict, words_list, guessed_word, guess):
     '''
     parameters: dictionary with permutations as keys and empty lists as values,
         a list of words, the currently guessed word as a list
@@ -75,17 +83,29 @@ def fill_families_dict(families_dict, words_list, guessed_word):
         of the corresponding key
     '''
     matched_words = []
+    occurrences_dict = {}
     list_copy = words_list.copy()
-    for permutation in families_dict:
+    permutations = list(families_dict.keys())
+    for perm in permutations:
         for word in words_list:
             if word in matched_words:
                 continue
-            blanked = convert_word(permutation, word)
-            if blanked == permutation:
-                families_dict[permutation].append(word)
+            elif guess not in word:
+                continue
+            elif word in occurrences_dict.keys():
+                word_count = occurrences_dict[word]
+            else:
+                word_count = counting_guess(guess, word)
+            blanked = convert_word(perm, word)
+            blanked_count = counting_guess(guess, blanked)
+            if word_count == blanked_count:
+                families_dict[perm].append(word)
                 matched_words.append(word)
                 list_copy.remove(word)
+            else:
+                occurrences_dict[word] = word_count
     families_dict[''.join(guessed_word)] = list_copy
+    breakpoint()
     return families_dict
 
 
@@ -101,10 +121,10 @@ def find_new_list_and_word(current_word, new_guess, words_list):
         index_permutations, current_word, new_guess
     )
     filled_families = fill_families_dict(
-        families_dict, words_list, current_word
+        families_dict, words_list, current_word, new_guess
     )
     max_list_key = ''.join(current_word)
-    for permutation in filled_families:
+    for permutation in filled_families.keys():
         permutation_list = filled_families[permutation]
         if len(permutation_list) > len(filled_families[max_list_key]):
             max_list_key = permutation
@@ -232,7 +252,6 @@ def run_game():
             game_completed = is_game_complete(
                 guesses_left, guessed_word, mystery_list, guessed_letters
             )
-
         new_game = is_new_game()
 
 
