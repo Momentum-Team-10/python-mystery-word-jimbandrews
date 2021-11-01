@@ -5,85 +5,6 @@ with open("words.txt") as file:
     word_list = word_string.split("\n")
 
 
-def build_difficulty_list(difficulty, word_list):
-    if difficulty == "ycw":
-        diff_list = [word for word in word_list if len(word) < 4]
-    elif difficulty == "easy":
-        diff_list = [word for word in word_list if 3 < len(word) < 7]
-    elif difficulty == "normal":
-        diff_list = [word for word in word_list if 6 < len(word) < 9]
-    elif difficulty == "hard":
-        diff_list = [word for word in word_list if 8 < len(word)]
-    return diff_list
-
-
-def pick_a_word(difficulty_list):
-    return difficulty_list[random.randint(0, len(difficulty_list)-1)]
-
-
-def game_setup():
-    difficulties = ["ycw", "easy", "normal", "hard"]
-    print("Welcome to the Mystery Word Game!")
-    difficulty = input(
-        "Please select your difficulty (ycw, easy, normal, or hard): "
-        ).lower()
-    while difficulty not in difficulties:
-        difficulty = input(
-            "Please choose ycw, easy, normal, or hard as a difficulty: "
-        ).lower()
-    difficulty_list = build_difficulty_list(difficulty, word_list)
-    picked_word = pick_a_word(difficulty_list)
-    return picked_word.upper()
-
-
-def guessed_word(word, correct):
-    guessed_list = []
-    for letter in word:
-        if letter in correct:
-            guessed_list.append(letter)
-        else:
-            guessed_list.append('_')
-    return guessed_list
-
-
-def game_display(word, correct, incorrect, guesses_left):
-    guessed_list = guessed_word(word, correct)
-    print(' '.join(guessed_list))
-    if len(incorrect) > 0:
-        print(f"Letter Graveyard: {', '.join(incorrect)}")
-    print(f"You have {guesses_left} guesses left.")
-
-
-def check_guess(mystery_word, user_guess, guesses_left, incorrect, correct):
-    if len(user_guess) > 1:
-        print("Please guess one letter at a time.")
-    elif user_guess == " ":
-        print("Please guess a letter of the alphabet.")
-    elif user_guess == "":
-        print("Please guess a letter of the alphabet.")
-    elif user_guess in incorrect or user_guess in correct:
-        print("You have already guessed that letter. Please try again.")
-    elif user_guess not in mystery_word:
-        print("Sorry, that guess was incorrect.")
-        incorrect.append(user_guess)
-        guesses_left -= 1
-    else:
-        print("That's correct!")
-        correct.append(user_guess)
-    return guesses_left, incorrect, correct
-
-
-def end_game():
-    play_again = input("Would you like to play again? (Yes/No) ").lower()
-    while play_again != "yes" and play_again != "no":
-        play_again = input("Please enter 'Yes' or 'No'.").lower()
-    if play_again == "yes":
-        new_game = True
-    elif play_again == "no":
-        new_game = False
-    return new_game
-
-
 def run_game():
     new_game = True
 
@@ -120,6 +41,85 @@ def run_game():
                 game_completed = True
 
         new_game = end_game()
+
+
+def game_setup():
+    difficulties = ["ycw", "easy", "normal", "hard"]
+    print("Welcome to the Mystery Word Game!")
+    difficulty = input(
+        "Please select your difficulty (ycw, easy, normal, or hard): "
+        ).lower()
+    while difficulty not in difficulties:
+        difficulty = input(
+            "Please choose ycw, easy, normal, or hard as a difficulty: "
+        ).lower()
+    difficulty_list = build_difficulty_list(difficulty, word_list)
+    picked_word = pick_a_word(difficulty_list)
+    return picked_word.upper()
+
+
+def build_difficulty_list(difficulty, word_list):
+    if difficulty == "ycw":
+        diff_list = [word for word in word_list if len(word) < 4]
+    elif difficulty == "easy":
+        diff_list = [word for word in word_list if 3 < len(word) < 7]
+    elif difficulty == "normal":
+        diff_list = [word for word in word_list if 6 < len(word) < 9]
+    elif difficulty == "hard":
+        diff_list = [word for word in word_list if 8 < len(word)]
+    return diff_list
+
+
+def pick_a_word(difficulty_list):
+    return difficulty_list[random.randint(0, len(difficulty_list)-1)]
+
+
+def game_display(word, correct, incorrect, guesses_left):
+    guessed_list = guessed_word(word, correct)
+    print(' '.join(guessed_list))
+    if len(incorrect) > 0:
+        print(f"Letter Graveyard: {', '.join(incorrect)}")
+    print(f"You have {guesses_left} guesses left.")
+
+
+def guessed_word(word, correct):
+    guessed_list = []
+    for letter in word:
+        if letter in correct:
+            guessed_list.append(letter)
+        else:
+            guessed_list.append('_')
+    return guessed_list
+
+
+def check_guess(mystery_word, user_guess, guesses_left, incorrect, correct):
+    if len(user_guess) > 1:
+        print("Please guess one letter at a time.")
+    elif user_guess == " ":
+        print("Please guess a letter of the alphabet.")
+    elif user_guess == "":
+        print("Please guess a letter of the alphabet.")
+    elif user_guess in incorrect or user_guess in correct:
+        print("You have already guessed that letter. Please try again.")
+    elif user_guess not in mystery_word:
+        print("Sorry, that guess was incorrect.")
+        incorrect.append(user_guess)
+        guesses_left -= 1
+    else:
+        print("That's correct!")
+        correct.append(user_guess)
+    return guesses_left, incorrect, correct
+
+
+def end_game():
+    play_again = input("Would you like to play again? (Yes/No) ").lower()
+    while play_again != "yes" and play_again != "no":
+        play_again = input("Please enter 'Yes' or 'No'.").lower()
+    if play_again == "yes":
+        new_game = True
+    elif play_again == "no":
+        new_game = False
+    return new_game
 
 
 run_game()
